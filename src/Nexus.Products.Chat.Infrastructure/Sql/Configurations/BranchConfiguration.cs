@@ -19,14 +19,27 @@ public sealed class BranchConfiguration : IEntityTypeConfiguration<Branch>
             .HasConversion(StronglyTypedIdConverters.BranchId)
             .ValueGeneratedNever();
 
-        // Branch has exactly one FK - ConversationId. No self-referencing FK exists here
-        // (ADR-014's text claiming one does is wrong for the current source, verified
-        // directly against Domain/Branch/Branch.cs).
+        // ConversationId is the owning Conversation FK. SP1-D06 adds the optional
+        // self-referencing ParentBranchId FK below (ADR-014's text claiming a self link
+        // existed was previously wrong for the source; it is now true by design).
         builder.HasOne<Conversation>()
             .WithMany()
             .HasForeignKey(branch => branch.ConversationId)
             // Conversation is the owning parent - deleting a Conversation takes its Branches.
             .OnDelete(DeleteBehavior.Cascade);
+
+        // SP1-D06 (Subchat recursion): optional self-referencing parent link. A branch may
+        // point at a parent branch within the same Conversation (a thread/sub-chat); null
+        // means root. Restrict (not Cascade) so deleting a parent Branch does not silently
+        // take its sub-branches with it, and so the Conversation -> Branch cascade does not
+        // create a second cascade path through the self link.
+        builder.Property(branch => branch.ParentBranchId)
+            .HasConversion(StronglyTypedIdConverters.BranchId);
+
+        builder.HasOne<Branch>()
+            .WithMany()
+            .HasForeignKey(branch => branch.ParentBranchId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder.Property(branch => branch.Name)
             .HasMaxLength(200)
@@ -46,10 +59,15 @@ public sealed class BranchConfiguration : IEntityTypeConfiguration<Branch>
         builder.HasIndex(branch => branch.ConversationId)
             .HasDatabaseName("IX_Branch_ConversationId");
 
-        // The Branch domain entity exposes no Reference property (HARD constraint: no Domain
-        // edits). ADR-014's schema map still gives session.Branch a BRN- ref for external
-        // tracing, so the column is an EF shadow property fed by the same Seq identity
-        // pattern Workspace uses, mapped to no CLR property.
+        // SP1-D06: index for the self-referencing parent FK (walking a branch's ancestor
+        // chain and listing direct sub-branches both filter on ParentBranchId).
+        builder.HasIndex(branch => branch.ParentBranchId)
+            .HasDatabaseName("IX_Branch_ParentBranchId");
+
+        // The Branch domain entity exposes no Reference property (SP1-D06 did add
+        // ParentBranchId, but Ref remains an EF shadow property). ADR-014's schema map still
+        // gives session.Branch a BRN- ref for external tracing, so the column is an EF shadow
+        // property fed by the same Seq identity pattern Workspace uses, mapped to no CLR property.
         builder.Property<int>("Seq")
             .ValueGeneratedOnAdd()
             .UseIdentityColumn();

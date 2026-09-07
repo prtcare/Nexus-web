@@ -6,4 +6,5 @@ public sealed record UpdateBranchResult(
     BranchId BranchId,
     string Name,
     string Description,
-    BranchStatus Status);
+    BranchStatus Status,
+    BranchId? ParentBranchId);

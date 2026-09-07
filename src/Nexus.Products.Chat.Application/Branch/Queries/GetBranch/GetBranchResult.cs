@@ -9,4 +9,5 @@ public sealed record GetBranchResult(
     string Name,
     string Description,
     BranchStatus Status,
-    DateTimeOffset CreatedAt);
+    DateTimeOffset CreatedAt,
+    BranchId? ParentBranchId);
