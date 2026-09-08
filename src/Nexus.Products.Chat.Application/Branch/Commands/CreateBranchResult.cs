@@ -4,4 +4,5 @@ namespace Nexus.Products.Chat.Application.Branch.Commands;
 
 public sealed record CreateBranchResult(
     BranchId BranchId,
-    string Name);
+    string Name,
+    BranchId? ParentBranchId);

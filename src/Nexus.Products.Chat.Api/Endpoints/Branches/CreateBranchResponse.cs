@@ -2,4 +2,5 @@
 
 public sealed record CreateBranchResponse(
     Guid BranchId,
-    string Name);
+    string Name,
+    Guid? ParentBranchId = null);

@@ -5,4 +5,5 @@ public sealed record ListBranchResponse(
     string Name,
     string Description,
     int Status,
-    DateTimeOffset CreatedAt);
+    DateTimeOffset CreatedAt,
+    Guid? ParentBranchId = null);
