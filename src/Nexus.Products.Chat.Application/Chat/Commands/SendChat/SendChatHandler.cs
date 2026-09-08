@@ -161,6 +161,19 @@ public sealed class SendChatHandler
 
         var response = await _intelligenceClient.SendTurnAsync(request, cancellationToken);
 
+        // WU-02 turn/evidence traceability: retain the Intelligence TurnId on the
+        // originating user message so every turn - including refusals/failures that never
+        // persist an assistant reply - can be re-traced from the conversation to its
+        // Intelligence evidence (turn trace / decisions, result report).
+        if (!string.IsNullOrWhiteSpace(response.TurnId))
+        {
+            userMessage.AttachIntelligenceTurnId(response.TurnId);
+
+            await _messageRepository.UpdateAsync(
+                userMessage,
+                cancellationToken);
+        }
+
         await ApplyPersistenceHintsAsync(project, response.PersistenceHints, cancellationToken);
 
         switch (response.Outcome)
@@ -215,6 +228,12 @@ public sealed class SendChatHandler
             conversation.Id,
             ConversationMessageRole.Assistant,
             replyText);
+
+        // WU-02 turn/evidence traceability: bind the reply to the same Intelligence turn.
+        if (!string.IsNullOrWhiteSpace(response.TurnId))
+        {
+            assistantMessage.AttachIntelligenceTurnId(response.TurnId);
+        }
 
         await _messageRepository.AddAsync(
             assistantMessage,

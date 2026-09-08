@@ -34,13 +34,18 @@ public static class BranchEndpoint
                             new ConversationId(
                                 request.ConversationId),
                             request.Name,
-                            request.Description),
+                            request.Description,
+                            request.ParentBranchId is null
+                                ? null
+                                : new BranchId(
+                                    request.ParentBranchId.Value)),
                         cancellationToken);
 
                 return Results.Ok(
                     new CreateBranchResponse(
                         result.BranchId.Value,
-                        result.Name));
+                        result.Name,
+                        result.ParentBranchId?.Value));
             });
 
         app.MapGet(
@@ -68,7 +73,8 @@ public static class BranchEndpoint
                         result.Name,
                         result.Description,
                         (int)result.Status,
-                        result.CreatedAt));
+                        result.CreatedAt,
+                        result.ParentBranchId?.Value));
             });
 
         app.MapGet(
@@ -92,7 +98,8 @@ public static class BranchEndpoint
                             branch.Name,
                             branch.Description,
                             (int)branch.Status,
-                            branch.CreatedAt)));
+                            branch.CreatedAt,
+                            branch.ParentBranchId?.Value)));
             });
 
         app.MapPut(
@@ -130,7 +137,11 @@ public static class BranchEndpoint
                             new BranchId(id),
                             request.Name,
                             request.Description,
-                            (BranchStatus)request.Status),
+                            (BranchStatus)request.Status,
+                            request.ParentBranchId is null
+                                ? null
+                                : new BranchId(
+                                    request.ParentBranchId.Value)),
                         cancellationToken);
 
                 if (result is null)
@@ -149,7 +160,10 @@ public static class BranchEndpoint
                         result.Description,
 
                         status =
-                            (int)result.Status
+                            (int)result.Status,
+
+                        parentBranchId =
+                            result.ParentBranchId?.Value
                     });
             });
 

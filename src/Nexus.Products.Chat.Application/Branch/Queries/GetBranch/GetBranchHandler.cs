@@ -31,6 +31,7 @@ public sealed class GetBranchHandler
             branch.Name,
             branch.Description,
             branch.Status,
-            branch.CreatedAt);
+            branch.CreatedAt,
+            branch.ParentBranchId);
     }
 }

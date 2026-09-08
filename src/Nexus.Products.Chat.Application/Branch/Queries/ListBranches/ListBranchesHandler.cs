@@ -28,7 +28,8 @@ public sealed class ListBranchesHandler
                     branch.Name,
                     branch.Description,
                     branch.Status,
-                    branch.CreatedAt))
+                    branch.CreatedAt,
+                    branch.ParentBranchId))
             .ToList();
     }
 }

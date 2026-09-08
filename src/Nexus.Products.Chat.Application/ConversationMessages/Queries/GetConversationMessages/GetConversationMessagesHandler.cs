@@ -27,7 +27,8 @@ public sealed class GetConversationMessagesHandler
                     message.Id,
                     message.Role,
                     message.Content,
-                    message.CreatedOn))
+                    message.CreatedOn,
+                    message.IntelligenceTurnId))
             .ToList();
     }
 }

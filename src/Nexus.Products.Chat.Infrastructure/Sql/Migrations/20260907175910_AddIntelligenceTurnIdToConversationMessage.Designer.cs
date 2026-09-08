@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Nexus.Products.Chat.Infrastructure.Sql;
 
@@ -11,9 +12,11 @@ using Nexus.Products.Chat.Infrastructure.Sql;
 namespace Nexus.Products.Chat.Infrastructure.Sql.Migrations
 {
     [DbContext(typeof(NexusChatDbContext))]
-    partial class NexusChatDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260907175910_AddIntelligenceTurnIdToConversationMessage")]
+    partial class AddIntelligenceTurnIdToConversationMessage
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -274,9 +277,6 @@ namespace Nexus.Products.Chat.Infrastructure.Sql.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<Guid?>("ParentBranchId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("Ref")
                         .IsRequired()
                         .ValueGeneratedOnAddOrUpdate()
@@ -296,9 +296,6 @@ namespace Nexus.Products.Chat.Infrastructure.Sql.Migrations
 
                     b.HasIndex("ConversationId")
                         .HasDatabaseName("IX_Branch_ConversationId");
-
-                    b.HasIndex("ParentBranchId")
-                        .HasDatabaseName("IX_Branch_ParentBranchId");
 
                     b.HasIndex("Ref")
                         .IsUnique()
@@ -609,11 +606,6 @@ namespace Nexus.Products.Chat.Infrastructure.Sql.Migrations
                         .HasForeignKey("ConversationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("Nexus.Products.Chat.Domain.Branch.Branch", null)
-                        .WithMany()
-                        .HasForeignKey("ParentBranchId")
-                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("Nexus.Products.Chat.Domain.Session.Session", b =>

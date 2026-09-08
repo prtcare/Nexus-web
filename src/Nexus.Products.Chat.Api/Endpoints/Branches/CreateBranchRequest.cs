@@ -3,4 +3,5 @@
 public sealed record CreateBranchRequest(
     Guid ConversationId,
     string Name,
-    string Description);
+    string Description,
+    Guid? ParentBranchId = null);
