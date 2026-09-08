@@ -6,4 +6,5 @@ public sealed record ConversationMessageResult(
     ConversationMessageId MessageId,
     ConversationMessageRole Role,
     string Content,
-    DateTimeOffset CreatedOn);
+    DateTimeOffset CreatedOn,
+    string? IntelligenceTurnId = null);
