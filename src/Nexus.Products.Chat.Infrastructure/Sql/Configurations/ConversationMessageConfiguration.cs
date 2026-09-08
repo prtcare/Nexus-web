@@ -33,6 +33,12 @@ public sealed class ConversationMessageConfiguration
         builder.Property(message => message.CreatedOn)
             .IsRequired();
 
+        // WU-02 turn/evidence traceability: nullable Intelligence turn id column. TurnId is
+        // Guid.ToString("N") (32 chars) on the Intelligence side; 64 leaves headroom without
+        // an unbounded column. Null for pre-traceability and non-turn rows.
+        builder.Property(message => message.IntelligenceTurnId)
+            .HasColumnType("nvarchar(64)");
+
         // ADR-014 schema map: conversation.ConversationMessage is a child aggregate with no
         // Ref (no Seq identity column either). Hot query path is messages-of-a-conversation
         // ordered by creation.

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Nexus.Products.Chat.Infrastructure.Sql;
 
@@ -11,9 +12,11 @@ using Nexus.Products.Chat.Infrastructure.Sql;
 namespace Nexus.Products.Chat.Infrastructure.Sql.Migrations
 {
     [DbContext(typeof(NexusChatDbContext))]
-    partial class NexusChatDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260907175910_AddIntelligenceTurnIdToConversationMessage")]
+    partial class AddIntelligenceTurnIdToConversationMessage
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

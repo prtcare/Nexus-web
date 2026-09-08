@@ -40,4 +40,17 @@ public sealed class ConversationMessage
     public string Content { get; }
 
     public DateTimeOffset CreatedOn { get; }
+
+    // WU-02 turn/evidence traceability: the Intelligence turn id that produced this
+    // message. Nullable and optional so existing message creation is unaffected; it is
+    // attached only after a turn has run (see SendChatHandler). Null for historical rows
+    // and for messages that were never the output/trigger of an Intelligence turn.
+    public string? IntelligenceTurnId { get; private set; }
+
+    public void AttachIntelligenceTurnId(string intelligenceTurnId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(intelligenceTurnId);
+
+        IntelligenceTurnId = intelligenceTurnId.Trim();
+    }
 }

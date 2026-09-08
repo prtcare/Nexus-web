@@ -8,6 +8,10 @@ public interface IConversationMessageRepository
         ConversationMessage message,
         CancellationToken cancellationToken = default);
 
+    Task UpdateAsync(
+        ConversationMessage message,
+        CancellationToken cancellationToken = default);
+
     Task<ConversationMessage?> GetAsync(
         ConversationMessageId id,
         CancellationToken cancellationToken = default);
